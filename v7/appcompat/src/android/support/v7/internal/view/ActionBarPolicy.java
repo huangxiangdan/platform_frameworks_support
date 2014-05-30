@@ -46,7 +46,8 @@ public class ActionBarPolicy {
 
     public boolean showsOverflowMenuButton() {
         // Only show overflow on HC+ devices
-        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+//        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB;
+    	return true;
     }
 
     public int getEmbeddedMenuWidthLimit() {
