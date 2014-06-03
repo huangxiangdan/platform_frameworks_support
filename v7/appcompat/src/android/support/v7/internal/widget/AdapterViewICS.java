@@ -16,6 +16,7 @@ package android.support.v7.internal.widget;
  * limitations under the License.
  */
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Parcelable;
@@ -47,6 +48,7 @@ import android.widget.ListView;
  * <a href="{@docRoot}guide/topics/ui/binding.html">Binding to Data with AdapterView</a>
  * developer guide.</p></div>
  */
+@SuppressLint("WrongCall")
 abstract class AdapterViewICS<T extends Adapter> extends ViewGroup {
 
     /**
