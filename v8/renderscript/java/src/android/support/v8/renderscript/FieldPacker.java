@@ -16,7 +16,6 @@
 
 package android.support.v8.renderscript;
 
-import android.os.SystemProperties;
 import android.support.v8.renderscript.RenderScript;
 
 /**
@@ -542,6 +541,13 @@ public class FieldPacker {
             return mN.getData();
         }
         return mData;
+    }
+
+    public int getPos() {
+        if (RenderScript.shouldThunk()) {
+            return mN.getPos();
+        }
+        return mPos;
     }
 
     private final byte mData[];

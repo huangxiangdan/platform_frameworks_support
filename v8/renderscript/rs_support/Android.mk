@@ -1,7 +1,7 @@
 
 LOCAL_PATH:=frameworks/rs
 rs_base_CFLAGS := -Werror -Wall -Wno-unused-parameter -Wno-unused-variable \
-		  -Wno-overloaded-virtual -DRS_COMPATIBILITY_LIB
+		  -Wno-overloaded-virtual -DRS_COMPATIBILITY_LIB -std=c++11
 
 ifeq ($(ARCH_ARM_HAVE_NEON),true)
 rs_base_CFLAGS += -DARCH_ARM_HAVE_NEON
@@ -107,9 +107,11 @@ LOCAL_SRC_FILES:= \
 	driver/rsdAllocation.cpp \
 	driver/rsdBcc.cpp \
 	driver/rsdCore.cpp \
+	driver/rsdElement.cpp \
 	driver/rsdRuntimeStubs.cpp \
 	driver/rsdSampler.cpp \
 	driver/rsdScriptGroup.cpp \
+	driver/rsdType.cpp \
 	cpu_ref/rsCpuCore.cpp \
 	cpu_ref/rsCpuScript.cpp \
 	cpu_ref/rsCpuRuntimeMath.cpp \
@@ -129,8 +131,10 @@ LOCAL_SRC_FILES:= \
 	cpu_ref/rsCpuRuntimeMathFuncs.cpp
 
 ifeq ($(ARCH_ARM_HAVE_ARMV7A),true)
-LOCAL_CFLAGS_arm := -DARCH_ARM_HAVE_VFP
+LOCAL_CFLAGS_arm := -DARCH_ARM_HAVE_VFP -DARCH_ARM_USE_INTRINSICS
 LOCAL_ASFLAGS_arm := -mfpu=neon
+# frameworks/rs/cpu_ref/rsCpuIntrinsics_neon_3DLUT.S does not compile.
+LOCAL_CLANG_ASFLAGS_arm += -no-integrated-as
 LOCAL_SRC_FILES_arm := \
         cpu_ref/rsCpuIntrinsics_neon_3DLUT.S \
 	cpu_ref/rsCpuIntrinsics_neon_ColorMatrix.S \
