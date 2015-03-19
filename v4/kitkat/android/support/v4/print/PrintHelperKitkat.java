@@ -78,6 +78,10 @@ class PrintHelperKitkat {
      */
     public static final int COLOR_MODE_COLOR = 2;
 
+    public interface OnPrintFinishCallback {
+        public void onFinish();
+    }
+
     int mScaleMode = SCALE_MODE_FILL;
 
     int mColorMode = COLOR_MODE_COLOR;
@@ -159,8 +163,10 @@ class PrintHelperKitkat {
      *
      * @param jobName The print job name.
      * @param bitmap  The bitmap to print.
+     * @param callback Optional callback to observe when printing is finished.
      */
-    public void printBitmap(final String jobName, final Bitmap bitmap) {
+    public void printBitmap(final String jobName, final Bitmap bitmap,
+            final OnPrintFinishCallback callback) {
         if (bitmap == null) {
             return;
         }
@@ -241,6 +247,13 @@ class PrintHelperKitkat {
                             }
                         }
                     }
+
+                    @Override
+                    public void onFinish() {
+                        if (callback != null) {
+                            callback.onFinish();
+                        }
+                    }
                 }, attr);
     }
 
@@ -280,15 +293,16 @@ class PrintHelperKitkat {
      *
      * @param jobName   The print job name.
      * @param imageFile The <code>Uri</code> pointing to an image to print.
+     * @param callback Optional callback to observe when printing is finished.
      * @throws FileNotFoundException if <code>Uri</code> is not pointing to a valid image.
      */
-    public void printBitmap(final String jobName, final Uri imageFile)
-            throws FileNotFoundException {
+    public void printBitmap(final String jobName, final Uri imageFile,
+            final OnPrintFinishCallback callback) throws FileNotFoundException {
         final int fittingMode = mScaleMode;
 
         PrintDocumentAdapter printDocumentAdapter = new PrintDocumentAdapter() {
             private PrintAttributes mAttributes;
-            AsyncTask<Uri, Boolean, Bitmap> loadBitmap;
+            AsyncTask<Uri, Boolean, Bitmap> mLoadBitmap;
             Bitmap mBitmap = null;
 
             @Override
@@ -297,9 +311,11 @@ class PrintHelperKitkat {
                                  final CancellationSignal cancellationSignal,
                                  final LayoutResultCallback layoutResultCallback,
                                  Bundle bundle) {
+
+                mAttributes = newPrintAttributes;
+
                 if (cancellationSignal.isCanceled()) {
                     layoutResultCallback.onLayoutCancelled();
-                    mAttributes = newPrintAttributes;
                     return;
                 }
                 // we finished the load
@@ -313,7 +329,7 @@ class PrintHelperKitkat {
                     return;
                 }
 
-                loadBitmap = new AsyncTask<Uri, Boolean, Bitmap>() {
+                mLoadBitmap = new AsyncTask<Uri, Boolean, Bitmap>() {
 
                     @Override
                     protected void onPreExecute() {
@@ -354,17 +370,16 @@ class PrintHelperKitkat {
                         } else {
                             layoutResultCallback.onLayoutFailed(null);
                         }
+                        mLoadBitmap = null;
                     }
 
                     @Override
                     protected void onCancelled(Bitmap result) {
                         // Task was cancelled, report that.
                         layoutResultCallback.onLayoutCancelled();
+                        mLoadBitmap = null;
                     }
-                };
-                loadBitmap.execute();
-
-                mAttributes = newPrintAttributes;
+                }.execute();
             }
 
             private void cancelLoad() {
@@ -380,7 +395,12 @@ class PrintHelperKitkat {
             public void onFinish() {
                 super.onFinish();
                 cancelLoad();
-                loadBitmap.cancel(true);
+                if (mLoadBitmap != null) {
+                    mLoadBitmap.cancel(true);
+                }
+                if (callback != null) {
+                    callback.onFinish();
+                }
             }
 
             @Override

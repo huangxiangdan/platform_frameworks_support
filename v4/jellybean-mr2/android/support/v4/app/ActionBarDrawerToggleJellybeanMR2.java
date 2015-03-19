@@ -20,6 +20,7 @@ package android.support.v4.app;
 import android.R;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
@@ -34,20 +35,33 @@ class ActionBarDrawerToggleJellybeanMR2 {
     public static Object setActionBarUpIndicator(Object info, Activity activity,
             Drawable drawable, int contentDescRes) {
         final ActionBar actionBar = activity.getActionBar();
-        actionBar.setHomeAsUpIndicator(drawable);
-        actionBar.setHomeActionContentDescription(contentDescRes);
+        if (actionBar != null) {
+            actionBar.setHomeAsUpIndicator(drawable);
+            actionBar.setHomeActionContentDescription(contentDescRes);
+        }
         return info;
     }
 
     public static Object setActionBarDescription(Object info, Activity activity,
             int contentDescRes) {
         final ActionBar actionBar = activity.getActionBar();
-        actionBar.setHomeActionContentDescription(contentDescRes);
+        if (actionBar != null) {
+            actionBar.setHomeActionContentDescription(contentDescRes);
+        }
         return info;
     }
 
     public static Drawable getThemeUpIndicator(Activity activity) {
-        final TypedArray a = activity.obtainStyledAttributes(THEME_ATTRS);
+        final ActionBar actionBar = activity.getActionBar();
+        final Context context;
+        if (actionBar != null) {
+            context = actionBar.getThemedContext();
+        } else {
+            context = activity;
+        }
+
+        final TypedArray a = context.obtainStyledAttributes(null, THEME_ATTRS,
+                R.attr.actionBarStyle, 0);
         final Drawable result = a.getDrawable(0);
         a.recycle();
         return result;

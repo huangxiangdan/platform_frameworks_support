@@ -17,6 +17,8 @@
 package android.support.v7.app;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ActionProvider;
 import android.support.v7.media.MediaRouter;
 import android.support.v7.media.MediaRouteSelector;
@@ -45,7 +47,7 @@ import java.lang.ref.WeakReference;
  * <h3>Prerequisites</h3>
  * <p>
  * To use the media route action provider, the activity must be a subclass of
- * {@link ActionBarActivity} from the <code>android.support.v7.appcompat</code>
+ * {@link AppCompatActivity} from the <code>android.support.v7.appcompat</code>
  * support library.  Refer to support library documentation for details.
  * </p>
  *
@@ -151,6 +153,7 @@ public class MediaRouteActionProvider extends ActionProvider {
      *
      * @return The selector, never null.
      */
+    @NonNull
     public MediaRouteSelector getRouteSelector() {
         return mSelector;
     }
@@ -161,7 +164,7 @@ public class MediaRouteActionProvider extends ActionProvider {
      *
      * @param selector The selector, must not be null.
      */
-    public void setRouteSelector(MediaRouteSelector selector) {
+    public void setRouteSelector(@NonNull MediaRouteSelector selector) {
         if (selector == null) {
             throw new IllegalArgumentException("selector must not be null");
         }
@@ -195,6 +198,7 @@ public class MediaRouteActionProvider extends ActionProvider {
      *
      * @return The dialog factory, never null.
      */
+    @NonNull
     public MediaRouteDialogFactory getDialogFactory() {
         return mDialogFactory;
     }
@@ -205,7 +209,7 @@ public class MediaRouteActionProvider extends ActionProvider {
      *
      * @param factory The dialog factory, must not be null.
      */
-    public void setDialogFactory(MediaRouteDialogFactory factory) {
+    public void setDialogFactory(@NonNull MediaRouteDialogFactory factory) {
         if (factory == null) {
             throw new IllegalArgumentException("factory must not be null");
         }
@@ -222,6 +226,7 @@ public class MediaRouteActionProvider extends ActionProvider {
     /**
      * Gets the associated media route button, or null if it has not yet been created.
      */
+    @Nullable
     public MediaRouteButton getMediaRouteButton() {
         return mButton;
     }
